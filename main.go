@@ -18,16 +18,16 @@ func main() {
 	})
 
 	r.POST("/url", func(c *gin.Context) {
-		handler.CreateShortUrl(c, config.Host, config.Port)
+		handler.CreateShortUrl(c, config.Rest.Host, config.Rest.Port)
 	})
 
 	r.GET("/:url", func(c *gin.Context) {
 		handler.HandleShortUrlRedirect(c)
 	})
 
-	store.InitializeStore()
+	store.InitializeStore(config.Redis.Host, config.Redis.Port)
 
-	if err := r.Run(config.Port); err != nil {
+	if err := r.Run(config.Rest.Port); err != nil {
 		log.Print(err)
 	}
 }

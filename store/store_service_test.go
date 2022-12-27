@@ -9,7 +9,7 @@ import (
 var testStoreService = &StorageService{}
 
 func init() {
-	testStoreService = InitializeStore()
+	testStoreService = InitializeStore("localhost", "6379")
 }
 
 func TestStoreInit(t *testing.T) {

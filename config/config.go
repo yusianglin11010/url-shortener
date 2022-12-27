@@ -7,20 +7,30 @@ import (
 )
 
 type AppConfig struct {
-	Port string
-	Host string
+	Rest  *RestConfig  `mapstructure:"rest"`
+	Redis *RedisConfig `mapstructure:"redis"`
+}
+
+type RestConfig struct {
+	Port string `mapstructure:"port"`
+	Host string `mapstructure:"host"`
+}
+
+type RedisConfig struct {
+	Port string `mapstructure:"port"`
+	Host string `mapstructure:"host"`
 }
 
 func NewConfig() AppConfig {
 	viper.SetConfigFile("./config/config.yaml")
-	
+
 	if err := viper.ReadInConfig(); err != nil {
 		log.Print("read config fail", err.Error())
 	}
-	port := viper.GetString("rest.port")
-	host := viper.GetString("rest.host")
-	return AppConfig{
-		Port: port,
-		Host: host,
+
+	var AppConfig AppConfig
+	if err := viper.Unmarshal(&AppConfig); err != nil {
+		panic("fail to load config")
 	}
+	return AppConfig
 }
