@@ -13,7 +13,7 @@ type URLCreationReq struct {
 	UserID  string `json:"user_id" blinding:"required"`
 }
 
-func CreateShortUrl(c *gin.Context) {
+func CreateShortUrl(c *gin.Context, host, port string) {
 
 	var creationReq URLCreationReq
 	if err := c.ShouldBindJSON(&creationReq); err != nil {
@@ -25,10 +25,9 @@ func CreateShortUrl(c *gin.Context) {
 	store.SaveUrlMapping(shortUrl, creationReq.LongUrl, creationReq.UserID)
 
 	// TODO: can be replaced with config
-	host := "http://localhost:9808/"
 	c.JSON(200, gin.H{
 		"message":   "short url created successfully",
-		"short_url": host + shortUrl,
+		"short_url": host + port + "/" + shortUrl,
 	})
 
 }
