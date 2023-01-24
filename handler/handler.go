@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,6 @@ import (
 
 type URLCreationReq struct {
 	LongUrl string `json:"long_url" blinding:"required"`
-	UserID  string `json:"user_id" blinding:"required"`
 }
 
 func CreateShortUrl(c *gin.Context, host, port string) {
@@ -21,9 +21,9 @@ func CreateShortUrl(c *gin.Context, host, port string) {
 		return
 	}
 
-	shortUrl := generator.GenerateShortLink(creationReq.LongUrl, creationReq.UserID)
-	store.SaveUrlMapping(shortUrl, creationReq.LongUrl, creationReq.UserID)
+	shortUrl := generator.GenerateShortLink(creationReq.LongUrl)
 
+	store.SaveUrlMapping(shortUrl, creationReq.LongUrl)
 	// TODO: can be replaced with config
 	c.JSON(200, gin.H{
 		"message":   "short url created successfully",
@@ -36,6 +36,7 @@ func HandleShortUrlRedirect(c *gin.Context) {
 
 	shortUrl := c.Param("url")
 	initialUrl := store.GetInitialUrl(shortUrl)
+	fmt.Println(initialUrl)
 	c.Redirect(302, initialUrl)
 
 }
